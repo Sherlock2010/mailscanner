@@ -18,6 +18,8 @@ class dictionary(object):
         Constructor
         '''
         self.master_dictionary = dict()
+        self.filter_dictionary = dict()
+        
         self.spam_dictionary = dict()
         self.ham_dictionary = dict()
         self.number = []
@@ -33,13 +35,17 @@ class dictionary(object):
         tokenizer = nltk.RegexpTokenizer("[\w']{2,}")   #leave the word with length > 1
         dictionary = dict()
         
+        
+        
         f = open(file_path, 'r')
         for line in f:
             words = tokenizer.tokenize(line)
             #print words
             for word in words:
                 if word in self.master_dictionary:
-                    if(word not in dictionary):
+                    if(word in dictionary):
+                        dictionary[word] += 1
+                    else:
                         dictionary[word] = 1
         f.close()
         
@@ -52,9 +58,12 @@ class dictionary(object):
         files = os.listdir(files_path)
         part_master_dictionary = dict()
         
+        for(key, value) in self.master_dictionary.items():
+            part_master_dictionary[key] = 0
+            
         for file in files:
             #generate each file dictionary
-
+            
             tokenizer = nltk.RegexpTokenizer("[\w']{2,}")   #leave the word with length > 1
             
             file_dictionary = dict()
@@ -113,7 +122,7 @@ class dictionary(object):
             for (key, value) in file_dictionary.items():        
                 #update value in master_dictionary
                 if(key in self.master_dictionary):
-                    self.master_dictionary[key] += 1
+                    self.master_dictionary[key] += file_dictionary[key]
               
                 else:
                     self.master_dictionary[key] = 1
@@ -128,15 +137,16 @@ class dictionary(object):
         filter the dictionary , leave the words with occur times between MIN_NUMBER and MAX_NUMBER
         """
         
-        filter_dictionary  = dict()
+        master_dictionary  = dict()
         
         for (key, value) in self.master_dictionary.items():
             if self.MIN_NUMBER < value and value < self.MAX_NUMBER : 
-                filter_dictionary[key] = value
+                master_dictionary[key] = value
+            else:
+                self.filter_dictionary[key] = value
          
-        self.master_dictionary = filter_dictionary
+        self.master_dictionary = master_dictionary
                    
-        return filter_dictionary
                  
     def output_dictionary(self, dictionary, file_path):
         """
@@ -151,7 +161,7 @@ class dictionary(object):
         f.close()
         
 if __name__ == "__main__":
-    input_file_path = "/tmp/test_data/2788.2000-11-07.farmer.ham.txt"
+    input_file_path = "/tmp/test_data/4252.2001-11-26.kitchen.ham.txt"
     output_file_path = "/tmp/test_data/dictionary.txt"
     master_dictionary_files_path = "/tmp/data/train/total/"
     #output_ham_file_path = "/tmp/mail/ham_dictionary.txt"
@@ -160,8 +170,9 @@ if __name__ == "__main__":
     d = dictionary()
     
     d.generate_master_dictionary(master_dictionary_files_path) 
-    #print "enron occur number %d" % master_dictionary['enron']
+    #print "more occur number %d" % d.master_dictionary['more']
     print len(d.master_dictionary)
+    #print d.master_dictionary["more"]
     
     d.filter_master_dictionary()
     print len(d.master_dictionary)
