@@ -57,10 +57,10 @@ class dictionary(object):
         """
         files = os.listdir(files_path)
         part_master_dictionary = dict()
-        
+        """
         for(key, value) in self.master_dictionary.items():
             part_master_dictionary[key] = 0
-            
+        """
         for file in files:
             #generate each file dictionary
             
@@ -84,7 +84,7 @@ class dictionary(object):
                 if(key in self.master_dictionary):
                 
                     if(key in part_master_dictionary):
-                        part_master_dictionary[key] += 1
+                        part_master_dictionary[key] += file_dictionary[key]
               
                     else:
                         part_master_dictionary[key] = 1
@@ -164,8 +164,8 @@ if __name__ == "__main__":
     input_file_path = "/tmp/test_data/4252.2001-11-26.kitchen.ham.txt"
     output_file_path = "/tmp/test_data/dictionary.txt"
     master_dictionary_files_path = "/tmp/data/train/total/"
-    #output_ham_file_path = "/tmp/mail/ham_dictionary.txt"
-    #output_spam_file_path = "/tmp/mail/spam_dictionary.txt"
+    output_ham_file_path = "/tmp/mail/ham_dictionary"
+    output_spam_file_path = "/tmp/mail/spam_dictionary"
     
     d = dictionary()
     

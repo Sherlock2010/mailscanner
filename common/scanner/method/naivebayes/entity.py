@@ -20,7 +20,7 @@ class naivebayes(object):
         Constructor
         '''
         #prior probability when word is not found in it's dictionary 
-        self.NOT_EXIT_PROBABILITY = 0.001
+        self.NOT_EXIT_PROBABILITY = 0.00001
         
     def file_number(self, file_number_path):
         f = open("file_number.data", 'r')
@@ -40,7 +40,7 @@ class naivebayes(object):
                 #print key + " " + str(master_dictionary[key])
                 result += math.log(master_dictionary[key]+1) - math.log(file_number)
             else:
-                result += math.log(file_number * self.NOT_EXIT_PROBABILITY)
+                result += math.log(file_number * self.NOT_EXIT_PROBABILITY) - math.log(file_number)
             
         result += math.log(file_number) - math.log(total_file_number)
         #print "-----------"
