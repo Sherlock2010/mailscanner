@@ -40,7 +40,7 @@ class dictionary(object):
         f = open(file_path, 'r')
         for line in f:
             words = tokenizer.tokenize(line)
-            #print words
+       
             for word in words:
                 if word in self.master_dictionary:
                     if(word in dictionary):
