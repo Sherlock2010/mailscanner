@@ -10,6 +10,8 @@ import time
 import os
 from common.filesystem.writer.dictionary import dictionary
 
+f = open("/tmp/out", "w")
+
 class KNN(object):
     '''
     classdocs
@@ -34,6 +36,7 @@ class KNN(object):
             dataMatTmp = []
 
             file_path = files_path + file
+
             file_dictionary = d.generate_file_dictionary(file_path)
 
             dataMatTmp.append(file_dictionary)
@@ -47,8 +50,8 @@ class KNN(object):
     def distance(self, X, Y):
         # X : dictionary
         # Y : dictionary
-        XTmp = X
-        YTmp = Y
+        XTmp = dict(X)
+        YTmp = dict(Y)
 
         dist = 0
     
@@ -73,8 +76,6 @@ class KNN(object):
         labelList = []
         indexList = []
         dataMatTmp = list(self.dataMat)
-    
-        # print self.dataMat
 
         for i in range(self.k):
             dist = self.distance(data, dataMatTmp[0][0])
@@ -82,15 +83,14 @@ class KNN(object):
     
             # search for the closest sample
             for j in range(len(dataMatTmp)):
+
                 dataTmp = dataMatTmp[j]
-                # print dataTmp
+            
                 #dataTmp = [file_dictionary, label, file_path]
-                #
                 if self.distance(data, dataTmp[0]) < dist:
                     dist = self.distance(data, dataTmp[0])
                     index = j
             
-            # print dataMatTmp[index][2]
             labelList.append(dataMatTmp[index][1])
             dataMatTmp.remove(dataMatTmp[index])
             indexList.append(index)
@@ -99,16 +99,18 @@ class KNN(object):
             result += labelList[i]
     
         if (result / self.k) > 0.5:
-            # print "ham mail"
+            # print>>f, "ham mail"
+            # print>>f, "\n"
             return 1
         else:
-            # print "spam mail"
+            # print>>f, "spam mail"
+            # print>>f, "\n"
             return 0
 
     def test(self, d, test_ham_files_path, test_spam_files_path):
-
         #ham mail
         ham_files = os.listdir(test_ham_files_path)
+
         number = 0
         ham_number = 0
 
@@ -116,13 +118,15 @@ class KNN(object):
             file_path = test_ham_files_path + file
             number += 1
 
+
             test_file_dictionary = d.generate_file_dictionary(file_path)
+
             if(self.predict(test_file_dictionary) == 1):
                 ham_number += 1
-
+  
         print "ham mail prediction : %f" % (ham_number / number)
 
-        #spam mail
+        # spam mail
         spam_files = os.listdir(test_spam_files_path)
 
         number = 0
@@ -146,13 +150,12 @@ if __name__ == '__main__':
     ham_test_files_path = "/home/wh/Documents/data2/test/ham/"
     spam_test_files_path = "/home/wh/Documents/data2/test/spam/"
 
-    ham_test_file_path = "/home/wh/Documents/data2/test/ham/2700.2001-09-24.kitchen.ham.txt"
+    ham_test_file_path = "/home/wh/Documents/data2/test/ham/0087.2000-01-05.kaminski.ham.txt"
     spam_test_file_path = "/home/wh/Documents/data2/test/spam/2701.2005-06-27.SA_and_HP.spam.txt"
     master_dictionary_files_path = "/home/wh/Documents/data/train/total/"
 
     d = dictionary()
     kNN = KNN()
-
     ham_label = 1
     spam_label = 0
 
@@ -163,6 +166,9 @@ if __name__ == '__main__':
     #generate dataMat
     kNN.generate_mat(d, ham_train_files_path, ham_label)
     kNN.generate_mat(d, spam_train_files_path, spam_label)
+
+    # test_file_dictionary = d.generate_file_dictionary(ham_test_file_path)
+    # kNN.predict(test_file_dictionary)
 
     kNN.test(d, ham_test_files_path, spam_test_files_path)
 
